@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     const buffer = new Uint8Array(arrayBuffer);
 
     // Upload to Supabase
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('dialogue-uploads')
       .upload(fileName, buffer, {
         contentType: file.type,
