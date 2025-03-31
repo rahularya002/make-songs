@@ -3,14 +3,13 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const PUBLIC_PATHS = ['/', '/login']
-const PROTECTED_PATHS_REGEX = /^\/(?!api|_next\/static|_next\/image|favicon\.ico|Image|songs)/
 
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname
     const isPublicPath = PUBLIC_PATHS.includes(path)
 
-    // Early return for static assets and API routes
-    if (!PROTECTED_PATHS_REGEX.test(path)) {
+    // Skip static assets and API routes
+    if (path.startsWith('/api') || path.startsWith('/_next') || path.startsWith('/favicon.ico') || path.startsWith('/Image') || path.startsWith('/songs')) {
         return NextResponse.next()
     }
 
@@ -19,14 +18,14 @@ export async function middleware(request: NextRequest) {
         secret: process.env.NEXTAUTH_SECRET
     })
 
-    // Handle public paths
+    // Redirect authenticated users away from public paths
     if (isPublicPath) {
         return token 
             ? NextResponse.redirect(new URL('/dashboard', request.url))
             : NextResponse.next()
     }
 
-    // Handle protected paths
+    // Redirect unauthenticated users to login
     if (!token) {
         const redirectUrl = new URL('/login', request.url)
         redirectUrl.searchParams.set('callbackUrl', path)
@@ -36,6 +35,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
 }
 
+// Use string-based matcher patterns
 export const config = {
-    matcher: [PROTECTED_PATHS_REGEX.source]
+    matcher: ['/((?!api|_next|favicon.ico|Image|songs).*)']
 }
