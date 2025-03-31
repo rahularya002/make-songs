@@ -14,6 +14,7 @@ export const config = {
   api: {
     bodyParser: false, // Disable Next.js default body parser
     externalResolver: true, // Enable external resolver to handle large file uploads
+    responseLimit: '10mb',
   },
 };
 
