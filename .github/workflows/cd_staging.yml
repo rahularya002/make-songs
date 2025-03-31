@@ -1,0 +1,15 @@
+name: Deploy to staging
+on: 
+    push:
+        branches:
+            - "main"
+
+jobs:
+    redeploy_everything:
+        name: Deploying everything to th staging cluster 
+
+        steps:
+            - name: SSH Into server
+            - run: 
+                echo ${{ secrets.SSH_PRIVATE_KEYS }} &> ~/ssh_key
+                ssh - i ~/ssh-key root@198.38.89.233    
