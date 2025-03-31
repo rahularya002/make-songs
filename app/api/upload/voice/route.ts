@@ -3,102 +3,116 @@ import { createClient } from '@supabase/supabase-js';
 import { getServerSession } from 'next-auth';
 import { v4 as uuidv4 } from 'uuid';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
-// Maximum file size: 10MB (in bytes)
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+export const config = {
+  api: {
+    bodyParser: false, // Disable Next.js default body parser
+  },
+};
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
+    // Authentication
     const session = await getServerSession();
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get the form data and file
+    // Get form data
     const formData = await request.formData();
     const file = formData.get('file') as File;
+
+    // File validation
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
-
-    // Check file size (10MB limit)
+    
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: 'File size exceeds the 10MB limit' },
+        { error: 'File size exceeds 10MB limit' },
         { status: 400 }
       );
     }
 
-    // Validate file type
-    const fileType = file.type;
+    // File type validation
     const validTypes = [
-      'audio/mpeg',        // MP3
-      'audio/mp4',         // MP4 audio
-      'audio/wav',         // WAV
-      'audio/x-wav',       // WAV (alternative MIME type)
-      'audio/ogg',         // OGG
-      'audio/flac',        // FLAC
-      'audio/aac',         // AAC
-      'audio/webm',        // WebM audio
-      'audio/x-m4a',       // M4A
-      'audio/x-aiff',      // AIFF
-      'audio/x-ms-wma'     // WMA
+      'audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/x-wav',
+      'audio/ogg', 'audio/flac', 'audio/aac', 'audio/webm',
+      'audio/x-m4a', 'audio/x-aiff', 'audio/x-ms-wma'
     ];
-
-    if (!validTypes.includes(fileType)) {
+    
+    if (!validTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type. Please upload a supported audio file.' },
+        { error: 'Invalid file type' },
         { status: 400 }
       );
     }
 
-    // Generate a unique file path
+    // File path generation
     const userId = session.user.email || 'unknown';
     const fileName = `${userId}/${uuidv4()}-${file.name}`;
 
-    // Convert File to Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    // Convert to readable stream
+    const fileStream = file.stream();
+    const readableStream = new ReadableStream({
+      start(controller) {
+        const reader = fileStream.getReader();
+        function push() {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              controller.close();
+              return;
+            }
+            controller.enqueue(value);
+            push();
+          });
+        }
+        push();
+      }
+    });
 
-    // Upload to Supabase Storage
-    const { error } = await supabase.storage
-      .from('voice-uploads')  // Changed bucket name
-      .upload(fileName, buffer, {
+    // Upload to Supabase using streams
+    const { error: uploadError } = await supabase.storage
+      .from('voice-uploads')
+      .upload(fileName, readableStream, {
         contentType: file.type,
-        cacheControl: '3600'
+        cacheControl: '3600',
+        duplex: 'half' // Required for streaming
       });
 
-    if (error) {
-      console.error('Supabase storage error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (uploadError) {
+      console.error('Supabase upload error:', uploadError);
+      return NextResponse.json(
+        { error: 'File upload failed' },
+        { status: 500 }
+      );
     }
 
-    // Get the public URL
+    // Get public URL
     const { data: urlData } = supabase.storage
-      .from('voice-uploads')  // Changed bucket name
+      .from('voice-uploads')
       .getPublicUrl(fileName);
 
-    // Record the upload in the database
-    const { error: dbError } = await supabase
+    // Database record (fire-and-forget)
+    supabase
       .from('uploads')
       .insert({
         user_id: userId,
         file_name: file.name,
         file_path: fileName,
-        file_type: 'audio',  // Changed file type
+        file_type: 'audio',
         file_size: file.size,
         public_url: urlData.publicUrl
+      })
+      .then(({ error }) => {
+        if (error) console.error('DB insert error:', error);
       });
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      // Continue even if DB recording fails
-    }
 
     return NextResponse.json({
       success: true,
@@ -106,10 +120,11 @@ export async function POST(request: NextRequest) {
       fileSize: file.size,
       url: urlData.publicUrl
     });
+
   } catch (error) {
-    console.error('Audio upload error:', error);
+    console.error('Server error:', error);
     return NextResponse.json(
-      { error: 'Server error while processing upload' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
