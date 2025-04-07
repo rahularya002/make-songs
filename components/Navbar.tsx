@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 // import { ModeToggle } from "./ui/theme-switch";
 import Link from "next/link";
-import { SignInModal } from "./SigninModal";
+// import { SignInModal } from "./SigninModal";
 
 
 export default function Navbar() {
