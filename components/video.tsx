@@ -7,7 +7,7 @@ export default function Video(){
                 </div>
                 <div className=" sm:my-10 my-4">
                     <iframe 
-                        src="https://www.youtube.com/embed/JSecIQFhza4?si=d86RJgRRCRQVmMAB" 
+                        src="https://www.youtube.com/embed/rgRZUF_qjsY?si=1xi0QUJxU3avzNn1" 
                         allowFullScreen 
                         className="rounded-md sm:w-[1280px] sm:h-[800px] w-full h-52" 
                         />

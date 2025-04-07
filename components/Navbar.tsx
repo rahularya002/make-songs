@@ -26,7 +26,7 @@ export default function Navbar() {
                     className="object-contain dark:hidden"
                 /> */}
                 <div className="flex gap-3 ">
-                    <SignInModal />
+                    {/* <SignInModal /> */}
                     <Link href="/login">
                         <Button >Sign up</Button>
                     </Link>

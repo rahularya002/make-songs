@@ -16,6 +16,7 @@ interface FormData {
 export default function Auth() {
     const { data: session } = useSession()
     const router = useRouter()
+    // Set default to true since sign-in is disabled
     const [isSignUp, setIsSignUp] = useState(true)
     const [formData, setFormData] = useState<FormData>({
         firstname: "",
@@ -25,6 +26,7 @@ export default function Auth() {
     })
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const [showThankYou, setShowThankYou] = useState(false)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -52,14 +54,15 @@ export default function Auth() {
                     throw new Error(data.error || 'Sign up failed')
                 }
 
-                toast.success('Account created successfully! Please sign in.', {
+                // Show thank you message
+                setShowThankYou(true)
+                toast.success('Welcome to the Vito-x music community!', {
                     position: "top-center",
-                    autoClose: 3000,
+                    autoClose: 5000,
                 })
-
-                // Switch to sign in mode after successful registration
-                setIsSignUp(false)
-            } else {
+            } 
+            // Sign in functionality is commented out for now
+            /* else {
                 // Handle sign in with NextAuth
                 const result = await signIn('credentials', {
                     redirect: false,
@@ -78,7 +81,7 @@ export default function Auth() {
                     })
                     router.push('/dashboard') // Redirect to dashboard after successful login
                 }
-            }
+            } */
         } catch (error) {
             console.error('Auth error:', error)
             setError(error instanceof Error ? error.message : 'An unexpected error occurred')
@@ -106,6 +109,29 @@ export default function Auth() {
         )
     }
 
+    // Thank you message after successful signup
+    if (showThankYou) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[90vh] gap-6 px-4">
+                <h1 className="text-4xl font-bold text-center">Thank You for Joining Vito-x!</h1>
+                <div className="max-w-md text-center space-y-4">
+                    <p className="text-xl">Your creative journey in music making begins now!</p>
+                    <p>We're excited to have you as part of our community of songwriters, producers, and music enthusiasts.</p>
+                    <p className="text-sm text-gray-400">Check your email for a confirmation message with next steps.</p>
+                </div>
+                <div className="flex gap-4 mt-6">
+                    {/* Sign In button removed */}
+                    <button
+                        onClick={() => router.push('/')}
+                        className="bg-primary dark:bg-outline text-white py-2 px-6 rounded-md"
+                    >
+                        Explore Vito-x
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
             <ToastContainer />
@@ -113,54 +139,37 @@ export default function Auth() {
                 <div className="flex items-center justify-center sm:w-[50%]">
                     <div className="flex flex-col gap-4 bg-gray-500/10 p-10 rounded-lg border border-white/20 shadow-primary-glow">
                         <h1 className="text-4xl font-normal text-center my-5">
-                            {isSignUp ? 'Sign up' : 'Sign in'} to Continue
+                            Sign up to Continue
                         </h1>
                         <p className="text-center text-sm text-gray-400">
-                            {isSignUp ? 'Sign up for Vito-x or ' : 'Sign in to your account or '}
-                            <button 
-                                type="button"
-                                className="text-blue-500 hover:underline" 
-                                onClick={() => {
-                                    setIsSignUp(!isSignUp)
-                                    setError(null)
-                                    setFormData({
-                                        firstname: "",
-                                        lastname: "",
-                                        email: "",
-                                        password: "",
-                                    })
-                                }}
-                            >
-                                {isSignUp ? 'log in to your existing account' : 'create a new one'}
-                            </button>
+                            Sign up for Vito-x to start creating music
+                            {/* Sign-in option removed */}
                         </p>
                         <form className="flex flex-col gap-4 mt-4 mb-10 px-10" onSubmit={handleSubmit}>
-                            {isSignUp && (
-                                <div className="flex gap-4">
-                                    <input 
-                                        type="text" 
-                                        name="firstname"
-                                        placeholder="First name" 
-                                        className="py-3 px-2 rounded-md outline-none w-full text-black"
-                                        value={formData.firstname}
-                                        onChange={handleChange}
-                                        required
-                                        minLength={2}
-                                        maxLength={50}
-                                    />
-                                    <input 
-                                        type="text" 
-                                        name="lastname"
-                                        placeholder="Last name"  
-                                        className="py-3 px-2 rounded-md outline-none w-full text-black"
-                                        value={formData.lastname}
-                                        onChange={handleChange}
-                                        required
-                                        minLength={2}
-                                        maxLength={50}
-                                    />
-                                </div>
-                            )}
+                            <div className="flex gap-4">
+                                <input 
+                                    type="text" 
+                                    name="firstname"
+                                    placeholder="First name" 
+                                    className="py-3 px-2 rounded-md outline-none w-full text-black"
+                                    value={formData.firstname}
+                                    onChange={handleChange}
+                                    required
+                                    minLength={2}
+                                    maxLength={50}
+                                />
+                                <input 
+                                    type="text" 
+                                    name="lastname"
+                                    placeholder="Last name"  
+                                    className="py-3 px-2 rounded-md outline-none w-full text-black"
+                                    value={formData.lastname}
+                                    onChange={handleChange}
+                                    required
+                                    minLength={2}
+                                    maxLength={50}
+                                />
+                            </div>
                             <input 
                                 type="email" 
                                 name="email"
@@ -186,7 +195,7 @@ export default function Auth() {
                                 className="bg-primary dark:bg-outline text-white py-2 rounded-md"
                                 disabled={isLoading}
                             >
-                                {isLoading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                                {isLoading ? 'Loading...' : 'Sign Up'}
                             </button>
                         </form>
                         {error && (

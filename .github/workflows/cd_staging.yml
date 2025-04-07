@@ -6,10 +6,15 @@ on:
 
 jobs:
     redeploy_everything:
-        name: Deploying everything to th staging cluster 
+        name: Deploying everything to th staging cluster
+        runs-on: 'ubuntu-latest' 
 
         steps:
-            - name: SSH Into server
-            - run: 
+             name: SSH Into server
+            run: 
                 echo ${{ secrets.SSH_PRIVATE_KEYS }} &> ~/ssh_key
-                ssh - i ~/ssh-key root@198.38.89.233    
+                ssh - i ~/ssh-key root@198.38.89.233
+                cd make-songs/ && git pull
+                npm install
+                npm run build
+                pm2 restart vito-x    
