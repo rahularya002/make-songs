@@ -1,18 +1,15 @@
 "use client"
+import { useRouter } from "next/navigation";
 import { AudioLines, MicVocal } from "lucide-react";
 import { Button } from "./ui/button";
 import MusicCard from "./music-card";
-import FileUpload from "./ui/file-upload";
 import { motion } from "framer-motion";
 
 export default function Hero() {
-  const handleVoiceFile = (file: File) => {
-    console.log("Voice Files:", file);
-  };
+  const router = useRouter();
 
-  const handleLyricsFile = (file: File) => {
-    console.log("Lyrics File:", file);
-    // Add further logic to handle the lyrics file here
+  const redirectToSignup = () => {
+    router.push("/signup");
   };
 
   return (
@@ -21,33 +18,32 @@ export default function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 20}}
           animate={{ opacity: 1, y: 0}}
-          transition={{ duration: 1, ease: "easeInOut"}} 
+          transition={{ duration: 1, ease: "easeInOut"}}
           className="sm:text-6xl text-center font-bold text-4xl"
-          >
+        >
             Make your Music
         </motion.h1>
         <h3 className="sm:text-2xl text-md text-gray-500/80 text-center sm:w-96 w-64 mx-auto sm:my-5 my-2">
           Create any song. Just give your voice or upload your lyrics.
         </h3>
         <div className="flex gap-3 my-20">
-          {/* Upload Voice */}
-          <Button variant={"outline"}>
-            <FileUpload
-              label="Upload your voice"
-              accept="audio/*"
-              icon={<AudioLines className="mr-2" />}
-              onFileSelect={handleVoiceFile}
-            />
+          {/* Upload Voice Button */}
+          <Button 
+            variant={"outline"} 
+            onClick={redirectToSignup}
+            className="flex items-center"
+          >
+            <AudioLines className="mr-2" />
+            Upload your voice
           </Button>
-
-          {/* Upload Lyrics */}
-          <Button>
-            <FileUpload
-              label="Upload your lyrics"
-              accept=".txt,.pdf"
-              icon={<MicVocal className="mr-2" />}
-              onFileSelect={handleLyricsFile}
-            />
+          
+          {/* Upload Lyrics Button */}
+          <Button
+            onClick={redirectToSignup}
+            className="flex items-center"
+          >
+            <MicVocal className="mr-2" />
+            Upload your lyrics
           </Button>
         </div>
         <MusicCard />
