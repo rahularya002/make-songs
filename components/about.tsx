@@ -123,11 +123,13 @@ export default function About() {
                 className="flex items-center justify-center w-12 h-12 border rounded-full bg-gray-500/40 cursor-pointer hover:bg-gray-500/60"
                 onClick={() => handlePlayClick(track.id)}
               >
-                {currentTrack === track.id && playerRef.current?.audio.current && !playerRef.current.audio.current.paused ? (
-                  <Pause />
-                ) : (
-                  <Play />
-                )}
+                {(() => {
+                  const isCurrentTrack = currentTrack === track.id;
+                  const audioElement = playerRef.current?.audio.current;
+                  const isPlaying = audioElement && !audioElement.paused;
+                  
+                  return isCurrentTrack && isPlaying ? <Pause /> : <Play />;
+                })()}
               </div>
             </div>
           </div>

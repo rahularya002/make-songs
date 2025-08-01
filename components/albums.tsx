@@ -113,11 +113,14 @@ export default function Albums(): JSX.Element {
                     onClick={() => handlePlay(album.id)}
                     aria-label={`${isPlaying && currentAlbum === album.id ? "Pause" : "Play"} ${album.title}`}
                   >
-                    {isPlaying && currentAlbum === album.id ? (
-                      <Pause size={28} className="text-black" />
-                    ) : (
-                      <Play size={28} className="text-black ml-1" />
-                    )}
+                    {(() => {
+                      const isCurrentAlbum = currentAlbum === album.id;
+                      return isPlaying && isCurrentAlbum ? (
+                        <Pause size={28} className="text-black" />
+                      ) : (
+                        <Play size={28} className="text-black ml-1" />
+                      );
+                    })()}
                   </button>
                 </div>
               )}

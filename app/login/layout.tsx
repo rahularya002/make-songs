@@ -1,14 +1,14 @@
-import { Providers } from "../providers"
-export default function RootLayout({
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Vito-x Login',
+  description: 'Sign in to your Vito-x account',
+}
+
+export default function LoginLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
+  return <>{children}</>
 }

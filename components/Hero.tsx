@@ -9,7 +9,7 @@ export default function Hero() {
   const router = useRouter();
 
   const redirectToSignup = () => {
-    router.push("/signup");
+    router.push("/login");
   };
 
   return (

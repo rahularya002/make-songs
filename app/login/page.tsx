@@ -26,7 +26,6 @@ export default function Auth() {
 
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [showThankYou, setShowThankYou] = useState<boolean>(false)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = e.target
@@ -42,6 +41,25 @@ export default function Auth() {
         setError(null)
         setIsLoading(true)
 
+        // Client-side validation
+        if (!formData.email || !formData.password || !formData.firstname || !formData.lastname) {
+            setError('All fields are required')
+            setIsLoading(false)
+            return
+        }
+
+        if (formData.password.length < 8) {
+            setError('Password must be at least 8 characters long')
+            setIsLoading(false)
+            return
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            setError('Please enter a valid email address')
+            setIsLoading(false)
+            return
+        }
+
         try {
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
@@ -55,11 +73,16 @@ export default function Auth() {
                 throw new Error(data.error || 'Sign up failed')
             }
 
-            setShowThankYou(true)
-            toast.success('Welcome to the Vito-x music community!', {
+            // Redirect to home page where user can sign in
+            toast.success('Account created successfully! Please sign in to continue.', {
                 position: "top-center",
                 autoClose: 5000,
             })
+            
+            // Redirect to home page after a short delay
+            setTimeout(() => {
+                router.push('/')
+            }, 2000)
 
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -88,26 +111,7 @@ export default function Auth() {
         )
     }
 
-    if (showThankYou) {
-        return (
-            <div className="flex flex-col items-center justify-center h-[90vh] gap-6 px-4">
-                <h1 className="text-4xl font-bold text-center">Thank You for Joining Vito-x!</h1>
-                <div className="max-w-md text-center space-y-4">
-                    <p className="text-xl">Your creative journey in music making begins now!</p>
-                    <p>We&apos;re excited to have you as part of our community of songwriters, producers, and music enthusiasts.</p>
-                    <p className="text-sm text-gray-400">Check your email for a confirmation message with next steps.</p>
-                </div>
-                <div className="flex gap-4 mt-6">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="bg-primary dark:bg-outline text-white py-2 px-6 rounded-md"
-                    >
-                        Explore Vito-x
-                    </button>
-                </div>
-            </div>
-        )
-    }
+
 
     return (
         <>

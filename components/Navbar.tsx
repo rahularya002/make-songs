@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 // import { ModeToggle } from "./ui/theme-switch";
 import Link from "next/link";
-// import { SignInModal } from "./SigninModal";
+import { SignInModal } from "./SigninModal";
 
 
 export default function Navbar() {
@@ -26,7 +26,7 @@ export default function Navbar() {
                     className="object-contain dark:hidden"
                 /> */}
                 <div className="flex gap-3 ">
-                    {/* <SignInModal /> */}
+                    <SignInModal />
                     <Link href="/login">
                         <Button >Sign up</Button>
                     </Link>

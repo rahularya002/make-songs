@@ -63,9 +63,9 @@ const handler = NextAuth({
         })
     ],
     pages: {
-        signIn: '/auth',
+        signIn: '/login',
         signOut: process.env.NEXTAUTH_URL || '/', // Redirect to home page after signout
-        error: '/auth', // Error page
+        error: '/login', // Error page
     },
     session: {
         strategy: "jwt",

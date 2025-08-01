@@ -1,0 +1,22 @@
+[33mcommit 07c61f24334afa13e4751c8701529b4859a8f1c6[m
+Author: rahularya002 <ritiksaini258@gmail.com>
+Date:   Mon Apr 7 14:37:54 2025 +0530
+
+    removed the sign in option temp. added different songs
+
+.github/workflows/cd_staging.yml
+app/login/page.tsx
+components/Navbar.tsx
+components/about.tsx
+components/music-card.tsx
+components/video.tsx
+nginx-conf/nginx-production.conf
+nginx-conf/nginx-staging.conf
+nginx.conf
+public/songs/Dil Ki Baatein  Kriti Sanon  Romantic Song  Video Song  VITO X.mp3
+public/songs/Iq Mulaqat    Romantic Bollywood Song  Vito X Presents.mp3
+public/songs/KHOYA KHOYA CHAND (Official Lyrical Video)- New Love Song 2025 by VITO X.mp3
+public/songs/song-2.mp3
+public/songs/song-3.mp3
+public/songs/song-4.mp3
+public/songs/song-5.mp3
