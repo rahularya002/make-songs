@@ -1,5 +1,4 @@
-// app/layout.tsx
-import { Providers } from '../providers'
+// app/dashboard/layout.tsx
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -7,18 +6,10 @@ export const metadata: Metadata = {
   description: 'Your audio project management platform',
 }
 
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    
-    <html lang="en" suppressHydrationWarning>
-      <body>
-          <Providers>{children}</Providers>
-      </body>
-    </html>
-    
-  )
+  return <>{children}</>
 }

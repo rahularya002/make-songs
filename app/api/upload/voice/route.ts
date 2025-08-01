@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
   try {
     // Authentication
     const session = await getServerSession();
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized - Please sign in' }, { status: 401 });
     }
 
     // Get form data
@@ -51,13 +51,22 @@ export async function POST(request: NextRequest) {
     
     if (!validTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type' },
+        { error: 'Invalid file type. Please upload audio files only.' },
         { status: 400 }
       );
     }
 
+    // Check if Supabase is configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('Supabase configuration missing');
+      return NextResponse.json(
+        { error: 'Upload service not configured' },
+        { status: 500 }
+      );
+    }
+
     // File path generation
-    const userId = session.user.email || 'unknown';
+    const userId = session.user.email;
     const fileName = `${userId}/${uuidv4()}-${file.name}`;
 
     // Convert to readable stream
@@ -91,7 +100,7 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       console.error('Supabase upload error:', uploadError);
       return NextResponse.json(
-        { error: 'File upload failed' },
+        { error: 'File upload failed. Please try again.' },
         { status: 500 }
       );
     }
@@ -126,7 +135,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error. Please try again later.' },
       { status: 500 }
     );
   }

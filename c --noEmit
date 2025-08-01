@@ -1,0 +1,19 @@
+[33mcommit 07c61f24334afa13e4751c8701529b4859a8f1c6[m
+Author: rahularya002 <ritiksaini258@gmail.com>
+Date:   Mon Apr 7 14:37:54 2025 +0530
+
+    removed the sign in option temp. added different songs
+
+[1mdiff --git a/components/Navbar.tsx b/components/Navbar.tsx[m
+[1mindex b602df7..72c4ebf 100644[m
+[1m--- a/components/Navbar.tsx[m
+[1m+++ b/components/Navbar.tsx[m
+[36m@@ -26,7 +26,7 @@[m [mexport default function Navbar() {[m
+                     className="object-contain dark:hidden"[m
+                 /> */}[m
+                 <div className="flex gap-3 ">[m
+[31m-                    <SignInModal />[m
+[32m+[m[32m                    {/* <SignInModal /> */}[m
+                     <Link href="/login">[m
+                         <Button >Sign up</Button>[m
+                     </Link>[m

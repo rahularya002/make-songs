@@ -2,11 +2,11 @@ import { Instagram, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Footer(){
-    return(
-        <div className="relative bottom-0 border-t h-20 w-full ">
+export default function Footer() {
+    return (
+        <div className="relative bottom-0 border-t h-20 w-full">
             <div className="flex items-center justify-between sm:px-10 px-4 h-20">
-                <div className="sm:px-10 ">
+                <div className="sm:px-10">
                     <Image
                         src="/Image/LOGO-dark.png"
                         alt="LOGO"
@@ -23,11 +23,12 @@ export default function Footer(){
                     />
                 </div>
                 <div className="flex gap-4 sm:px-10">
-                    <Link href={'https://www.instagram.com/vito_x666'}><Instagram />
+                    <Link href="https://www.instagram.com/vito_x666">
+                        <Instagram />
                     </Link>
-                    <Link href={'https://www.youtube.com/@vitoX666'}><Youtube />
+                    <Link href="https://www.youtube.com/@vitoX666">
+                        <Youtube />
                     </Link>
-                    
                 </div>
             </div>
         </div>
