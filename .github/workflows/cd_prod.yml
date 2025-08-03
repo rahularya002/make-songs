@@ -16,6 +16,6 @@ jobs:
                 echo "${{ secrets.KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
                 chmod 700 /home/runner/ssh_key
                 ssh - i ~/ssh-key root@198.38.89.233 
-                echo "${{ secrets.SSH_PASS }}" -t "cd make-songs/ && git pull origin main && export PATH=/root/.nvm/versions/node/v22.14.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin && npm install && npm run build && pm2 restart vito-x"
+                echo "${{ secrets.SSH_PASS }}" -t "cd make-songs/ && git pull origin main && export PATH=/root/.nvm/versions/node/v22.14.0/bin && npm install && npm run build && pm2 restart vito-x"
                 
                  
