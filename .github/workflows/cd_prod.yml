@@ -1,0 +1,21 @@
+name: Deploy to production
+on: 
+    push:
+        branches: [ main ]
+
+jobs:
+    redeploy_everything:
+        name: Deploying everything to th production cluster
+        runs-on: 'ubuntu-latest' 
+        steps:
+           - run: |
+                echo "${{ secrets.SSH_PRIVATE_KEYS }}" &> ~/ssh_key
+                mkdir -p /home/runner/.ssh
+                ls /home/runner/.ssh
+                touch /home/runner/.ssh/known_hosts
+                echo "${{ secrets.KNOWN_HOSTS}}" &> /home/runner/.ssh/known_hosts
+                chmod 700 /home/runner/ssh_key
+                ssh - i ~/ssh-key root@198.38.89.233 
+                echo "${{ secrets.SSH_PASS }}" -t "cd make-songs/ && git pull origin main && export PATH=/root/.nvm/versions/node/v22.14.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin && npm install && npm run build && pm2 restart vito-x"
+                
+                 
