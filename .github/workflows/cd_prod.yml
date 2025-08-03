@@ -9,7 +9,7 @@ jobs:
         runs-on: 'ubuntu-latest' 
         steps:
            - run: |
-                echo "${{ secrets.SSH_PRIVATE_KEYS }}" &> ~/ssh_key
+                echo "${{ secrets.SSH_PRIVATE_KEY }}" &> ~/ssh_key
                 mkdir -p /home/runner/.ssh
                 ls /home/runner/.ssh
                 touch /home/runner/.ssh/known_hosts
